@@ -5,8 +5,21 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 1. What was broken when you started?
 
 - What did the game look like the first time you ran it?
+![first time running screenshot](screenshots/first.png)!
 - List at least two concrete bugs you noticed at the start  
   (for example: "the secret number kept changing" or "the hints were backwards").
+
+1. When I first loaded the game the "Attempts left" counter read 7 even before I’d guessed—this happened for every difficulty level.
+![attempts display error](screenshots/attemptnum.png)
+2. Starting a new game didn’t clear out the previous game’s information; the old score, history, and secret remained visible.
+3. The feedback hints were inverted: a guess below the secret prompted "go lower" and a guess above prompted "go higher". In particular, guessing 100 always produced "go lower".
+![should go lower](screenshots/go_lower.png)
+![should go higher](screenshots/go_higher.png)
+![guessing 100](screenshots/100.png)
+4. Once the counter displayed 1 attempt remaining, the very next guess triggered the "out of attempts" message without giving me that last chance.
+5. Pressing the "New Game" button in the middle of a game instantly changed the secret number.
+6. Changing the difficulty slider didn’t alter the secret number’s range—the secret stayed between 1 and 100 no matter which difficulty I chose.
+![difficulty range bug](screenshots/difficuty_bug.png)
 
 ---
 
