@@ -1,68 +1,13 @@
 import random
 import streamlit as st
-
-def get_range_for_difficulty(difficulty: str):
-    if difficulty == "Easy":
-        return 1, 20
-    if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
-        return 1, 50
-    return 1, 100
-
-
-def parse_guess(raw: str):
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
-        return False, None, "Enter a guess."
-
-    try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
-
-    return True, value, None
-
-
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📉 Go LOWER!"
-        else:
-            return "Too Low", "📈 Go HIGHER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📉 Go LOWER!"
-        return "Too Low", "📈 Go HIGHER!"
-
-
-def update_score(current_score: int, outcome: str, attempt_number: int):
-    if outcome == "Win":
-        points = 100 - 10 * (attempt_number + 1)
-        if points < 10:
-            points = 10
-        return current_score + points
-
-    if outcome == "Too High":
-        if attempt_number % 2 == 0:
-            return current_score + 5
-        return current_score - 5
-
-    if outcome == "Too Low":
-        return current_score - 5
-
-    return current_score
+# FIX: Refactored core logic into logic_utils.py (GitHub Copilot Agent Mode).
+# Collaborated with Copilot to extract functions and verified each moved function still works.
+from logic_utils import (
+    get_range_for_difficulty,
+    parse_guess,
+    check_guess,
+    update_score,
+)
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
@@ -86,6 +31,9 @@ attempt_limit = attempt_limit_map[difficulty]
 
 low, high = get_range_for_difficulty(difficulty)
 
+# FIX: Added difficulty change detection to reset game state.
+# Bug: Switching difficulty mid-game kept the old secret and attempt count.
+# Copilot Agent Mode generated this block; I confirmed logic was correct in diff review.
 if "current_difficulty" not in st.session_state or st.session_state.current_difficulty != difficulty:
     st.session_state.current_difficulty = difficulty
     st.session_state.secret = random.randint(low, high)
@@ -100,6 +48,9 @@ st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
+# FIX: Changed attempts initial value from 1 to 0.
+# Bug: Starting at 1 caused attempt count to be off by one throughout the game.
+# Fixed using Copilot inline suggestion, verified by running the game manually.
 if "attempts" not in st.session_state:
     st.session_state.attempts = 0
 
@@ -166,6 +117,9 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
+        # FIX: Removed alternating str/int casting of secret.
+        # Bug: secret was cast to str on even attempts, causing comparison failures.
+        # I spotted this in the diff review; Copilot had introduced the alternating logic incorrectly.
         secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)

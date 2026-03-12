@@ -26,19 +26,39 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 2. How did you use AI as a teammate?
 
 - Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
+
+I used **GitHub Copilot Agent Mode** throughout this project. It helped me identify bugs, generate fixes, and refactor code.
+
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
+
+**Correctly Fixed: Reversed High/Low Hints**
+- **What Copilot suggested**: When checking if `guess > secret`, return "Too High" with message "Go LOWER!" (not "Go HIGHER!"). It identified that BOTH the True and False branches needed fixing because the original code had the logic backwards.
+- **How I verified**: I ran the game and tested guessing 100 when the secret was 50. The hint correctly said "Go LOWER!" instead of the original broken "Go HIGHER!". I also ran pytest and verified all 10 tests pass, including the targeted tests I created for this bug.
+
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
+
+**Incorrectly Suggested: Alternating str/int Casting of Secret**
+- **What Copilot suggested**: On even-numbered attempts, convert the secret to a string for comparison. This was introduced during an earlier code generation attempt.
+- **Why it was wrong**: String comparison of numbers fails lexicographically—"100" < "50" as strings, causing incorrect game behavior. This caused guesses like 100 to always return "go lower" even when wrong.
+- **How I verified it was wrong**: I manually tested the game and noticed guesses above the secret still gave the wrong hint. When I reviewed the code diff, I spotted the alternating `if attempt_number % 2 == 0: secret = str(secret)` logic. I removed it and re-tested, and the hints became correct.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
 - How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
+
+I used three verification methods: (1) Manual gameplay testing—playing several rounds and checking if the hint messages, attempt counter, and score all behaved correctly; (2) Pytest unit tests—running `python3 -m pytest tests/test_game_logic.py -v` to ensure all assertion pass; (3) Code review—inspecting the diff between the broken and fixed versions to confirm the logic change matched the bug description.
+
+- Describe at least one test you ran (manual or using pytest) and what it showed you about your code.
+
+**Pytest Test: `test_high_guess_returns_lower_hint`**
+- **What it tests**: When `guess > secret`, the function should return "Too High" outcome with a message containing "LOWER".
+- **What it showed**: This test initially failed with the reversed logic (returning "Go HIGHER!" incorrectly). After applying the fix, the test passed, confirming the hint was now correct. I created 10 targeted tests total to prevent regression of both the high/low bug and the string casting bug.
+
 - Did AI help you design or understand any tests? How?
 
----
+Yes. I asked Copilot to help me create comprehensive test cases that would catch the specific bugs I fixed. Copilot suggested testing boundary conditions (guesses at 1, 100, off-by-one), mixed-type comparisons (when secret is a string), and the core high/low hint logic. This helped me design tests that would fail with the original buggy code and pass after my fixes.
 
 ## 4. What did you learn about Streamlit and state?
 
