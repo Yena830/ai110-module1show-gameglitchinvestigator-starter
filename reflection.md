@@ -63,14 +63,53 @@ Yes. I asked Copilot to help me create comprehensive test cases that would catch
 ## 4. What did you learn about Streamlit and state?
 
 - In your own words, explain why the secret number kept changing in the original app.
+
+Every time the user clicked a button or typed something, 
+Streamlit re-ran the entire app.py file from top to bottom. 
+The original code had `random.randint(1, 100)` running at the 
+top level with no protection, so every rerun generated a brand 
+new secret number. This made the game impossible to play because 
+the target kept changing after every guess.
+
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+
+Imagine every time you click a button on a website, the whole 
+page refreshes and forgets everything — like clearing your 
+browser history after every click. That's what Streamlit does 
+by default. Session state is like a small notebook that Streamlit 
+keeps on the side. Anything you write in that notebook survives 
+the refresh. So instead of generating a new secret number every 
+rerun, we store it in st.session_state.secret and it stays the 
+same until we deliberately change it.
+
 - What change did you make that finally gave the game a stable secret number?
 
+The original code generated the secret with a bare random.randint() call at the top of the script. Since Streamlit reruns the entire script on every button click, the secret changed on every guess. The fix was to store it in st.session_state.secret so it persists across reruns, and only regenerate it when the difficulty changes or the player starts a new game.
 ---
 
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+
+I want to keep using the habit of opening a new Chat session 
+for each individual bug. Keeping each conversation focused on 
+one problem stopped the AI from getting confused by unrelated 
+context, and made it much easier to trace which fix came from 
+which conversation.
+
 - What is one thing you would do differently next time you work with AI on a coding task?
+
+Next time I would add FIXME comments before asking the AI for 
+  help, instead of just describing the bug in words. Pointing the 
+  AI directly at the exact line made its suggestions much more 
+  accurate, and I did not always do this at the start of the 
+  project.
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+I used to assume that if the AI sounded confident, the code was 
+  probably correct. This project taught me that AI can produce 
+  plausible-looking code that is subtly wrong, so reviewing every 
+  diff carefully and running tests is not optional — it is the 
+  most important part of working with AI.
