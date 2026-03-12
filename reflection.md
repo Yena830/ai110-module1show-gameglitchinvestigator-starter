@@ -16,11 +16,11 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ![should go lower](screenshots/go_lower.png)
 ![should go higher](screenshots/go_higher.png)
 ![guessing 100](screenshots/100.png)
-4. Once the counter displayed 1 attempt remaining, the very next guess triggered the "out of attempts" message without giving me that last chance.
+4. After submitting a guess, the "Attempts left" counter didn't update immediately, requiring input of the next number to trigger the update. This caused issues like showing "Attempts left: 1" even when the game should have ended on the last attempt.
 5. Pressing the "New Game" button in the middle of a game instantly changed the secret number.
 6. Changing the difficulty slider didn’t alter the secret number’s range—the secret stayed between 1 and 100 no matter which difficulty I chose.
 ![difficulty range bug](screenshots/difficuty_bug.png)
-
+7. On even-numbered guesses, the secret number was converted to a string, which caused string comparison instead of numeric comparison. This made certain guesses (like 100) always return "go lower" due to lexicographic ordering (e.g., "100" < "50" as strings), even when numerically incorrect.
 ---
 
 ## 2. How did you use AI as a teammate?
